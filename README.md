@@ -19,10 +19,12 @@ Then:
 
 ## Notes
 
-In my findings, the line
+In my findings, static pages seem to be the culprit.
+For example, the line
 
 ```ts
 export const dynamic = "force-static";
 ```
 
-seems to be the culprit but I don't know more at this stage.
+for the /error page triggers the error.
+But if you add back `"use client"` to the page, the error disappears.
