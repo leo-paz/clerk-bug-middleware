@@ -17,7 +17,7 @@ Then:
 - `open http://localhost:3000/expected-unmatched` -> this does not work, as expected
 - `open http://localhost:3000/error` -> this does not work and this is the issue
 
-## Notes
+## Findings
 
 In my findings, static pages that rely on auth data seem to be the culprit.
 
@@ -40,6 +40,14 @@ For the other pages in this codebase - including with the `"use client"` pseudo-
 
 So, how to keep using static pages together with clerk auth data (for example from a Navbar)?
 I have managed to make it work by extracting auth-dependant data to a separate component which is hydrated into the static page.
+
+Further investigation:
+- nextjs docs are clear https://nextjs.org/docs/app/building-your-application/rendering/static-and-dynamic-rendering 
+  > By default, Next.js statically renders routes to improve performance. [...] During static rendering, if a dynamic function [...] is discovered, Next.js will switch to dynamically rendering the whole route at request time. [...] Dynamic functions rely on information that can only be known at request time such as a user's cookies, current requests headers, or the URL's search params.
+- by reading the clerk source code, we find such dynamic function call with `headers()` called here https://github.com/clerkinc/javascript/blob/main/packages/nextjs/src/app-beta/auth.ts which is used to set the initial state of `<ClerkProvider/>` in https://github.com/clerkinc/javascript/blob/main/packages/nextjs/src/app-beta/ClerkProvider.tsx
+- (also) clerk devs have setup a playground for nextjs app router https://github.com/clerkinc/javascript/tree/main/playground/app-router
+
+
 
 ```sh
 → npm run build
