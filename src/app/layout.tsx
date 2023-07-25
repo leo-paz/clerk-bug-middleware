@@ -19,9 +19,7 @@ export default function RootLayout({
   return (
     <ClerkProvider>
       <html lang="fr" className="h-full bg-white">
-        <body className="h-full">
-          <Shell>{children}</Shell>
-        </body>
+        <body className="h-full">{children}</body>
       </html>
     </ClerkProvider>
   );

@@ -19,12 +19,67 @@ Then:
 
 ## Notes
 
-In my findings, static pages seem to be the culprit.
-For example, the line
+In my findings, static pages that rely on auth data seem to be the culprit.
+
+For example, this line for the /error page triggers the error:
 
 ```ts
 export const dynamic = "force-static";
 ```
 
-for the /error page triggers the error.
 But if you add back `"use client"` to the page, the error disappears.
+This is because the page had a layout which used a Navbar which in turns uses clerk auth data.
+But a truly static page cannot rely on auth data since the data is static.
+
+For the other pages in this codebase - including with the `"use client"` pseudo-fix - next.js silently turn the pages into server-side rendered pages. You can see for yourself by running `npm run build` and look for these lines (the output of npm run build is attached at the end):
+
+```txt
+λ  (Server)  server-side renders at runtime (uses getInitialProps or getServerSideProps)
+○  (Static)  automatically rendered as static HTML (uses no initial props)
+```
+
+So, how to keep using static pages together with clerk auth data (for example from a Navbar)?
+I have managed to make it work by extracting auth-dependant data to a separate component which is hydrated into the static page.
+
+```sh
+→ npm run build
+
+> clerk-bug-middleware@0.1.0 build
+> next build
+
+- info Loaded env from /Users/louis.guitton/workspace/clerk-bug-middleware/.env.local
+- info Creating an optimized production build
+- info Compiled successfully
+- info Linting and checking validity of types
+- info Collecting page data
+- info Generating static pages (7/7)
+- info Finalizing page optimization
+
+Route (app)                                Size     First Load JS
+┌ λ /                                      1.19 kB        91.5 kB
+├ λ /error                                 19.5 kB         110 kB
+├ λ /expected-unmatched                    1.19 kB        91.5 kB
+├ ○ /favicon.ico                           0 B                0 B
+├ ○ /idiomatic-fix                         1.19 kB        91.5 kB
+├ λ /sign-in/[[...sign-in]]                1.19 kB        91.5 kB
+└ λ /sign-up/[[...sign-up]]                1.18 kB        91.5 kB
++ First Load JS shared by all              90.3 kB
+  ├ chunks/52-0b19101870ca2da7.js          12.2 kB
+  ├ chunks/596-02dd902429d6b491.js         25.7 kB
+  ├ chunks/fd9d1056-6becc0648d5029ca.js    50.5 kB
+  ├ chunks/main-app-830910d2db03a3b7.js    214 B
+  └ chunks/webpack-7d349c12197dee14.js     1.7 kB
+
+Route (pages)                              Size     First Load JS
+─ ○ /404                                   182 B          75.8 kB
++ First Load JS shared by all              75.6 kB
+  ├ chunks/framework-8883d1e9be70c3da.js   45 kB
+  ├ chunks/main-a48cf18973c7929a.js        28.7 kB
+  ├ chunks/pages/_app-52924524f99094ab.js  195 B
+  └ chunks/webpack-7d349c12197dee14.js     1.7 kB
+
+ƒ Middleware                               167 kB
+
+λ  (Server)  server-side renders at runtime (uses getInitialProps or getServerSideProps)
+○  (Static)  automatically rendered as static HTML (uses no initial props)
+```
