@@ -2,6 +2,8 @@
 
 > Minimal reproducible example for the issue discussed [here](https://github.com/clerkinc/clerk-next-app-router-starter/issues/2)
 
+> Clerk: auth() was called but it looks like you aren't using authMiddleware in your middleware file. Please use authMiddleware and make sure your middleware matcher is configured correctly and it matches this route or page
+
 ## Usage
 
 First setup your clerk app and replace the env variables from .env.example in your .env.local
