@@ -10,5 +10,5 @@ export const config = {
   // matcher: ["/((?!.*\\..*|_next).*)", "/", "/(api|trpc)(.*)"],
   // so we replace it by a simpler matcher
   // ref: https://nextjs.org/docs/app/building-your-application/routing/middleware#matching-paths
-  matcher: ["/", "/sign-in", "/sign-up"],
+  matcher: ["/", "/sign-in", "/sign-up", "/error"],
 };

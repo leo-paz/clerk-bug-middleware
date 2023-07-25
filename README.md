@@ -16,3 +16,13 @@ Then:
 - `open http://localhost:3000/` -> this works, as expected
 - `open http://localhost:3000/expected-unmatched` -> this does not work, as expected
 - `open http://localhost:3000/error` -> this does not work and this is the issue
+
+## Notes
+
+In my findings, the line
+
+```ts
+export const dynamic = "force-static";
+```
+
+seems to be the culprit but I don't know more at this stage.
